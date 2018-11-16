@@ -2,8 +2,23 @@
 
 This project is a tool to help searchers in Optimization to code exciting new optimizer ! 
 
-You can use any part or all this project to help you to implement new function or new optimizer. It's especially handsome in Deep Learning area because it abstracts complexity of Deep Learning framework.
+You can use any part or all this project to help you to implement new optimizer or new function to minimize. It's especially handsome in Deep Learning field because our tool abstracts complexity of the Deep Learning framework Tensorflow.
 
-<h1>Why this framework is usefull ?</h1>
+<h2>Why this framework is usefull ?</h2>
 The use of this framework is particularly recommended in the field of Deep Learning where update weight directly in TF is difficult to implement. This framework proposes to abstract this complexity with the forward and gradient descent are computed in GPU and the optimization is partially written in Python.
 
+<h2>How to use it ?</h2>
+The usage is very simple :
+<code>
+function_to_min = Rosenbrock()
+optimizer = MCMC()
+x=np.random.uniform(-1,+1,(2,))
+x_n=optimizer.run_on_step(x,function_to_min)
+</code>
+x_n contains the new position.
+
+You can check : 
+<ul>
+  <li> <b>simple.py</b> to a complete example</li>
+  <li> <b>bench.py test</b> many strategies as Deep Learning optimizer </li>
+</ul>
