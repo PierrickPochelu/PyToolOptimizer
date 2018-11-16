@@ -34,13 +34,10 @@ More examples here :
 <h2>Use case</h2>
 
 <h3> Use case 1 : compare different Deep Learning optimizer </h3>
-<b> bench.py </b>
 <img src="img1.png"/>
 
 <h3> Use case 2 : show SPSA optimizer on Rosenbrock 2D function </h3>
-<b> bench.py </b>
 <img src="img2.png"/>
 
 <h3> Use case 3 : compare MCMC and SGD on cosinusoidal 1D function </h3>
-<b></b>
 <img src="img3.png"/>
