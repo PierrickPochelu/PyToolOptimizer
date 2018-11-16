@@ -31,9 +31,29 @@ More examples here :
 </ul>
 </p>
 
-<h3> How implement new function ? </h3>
+<h3> How implement new function to minimize ? </h3>
+
+```Python
+class MyNewMultiDimSquaredFunction(InterfaceFunctionToMin):
+    def __init__(self):
+        pass
+
+    def f(self,x):
+        return np.sum(x**2) 
+```
 
 <h3> How implement new optimizer ? </h3>
+
+```Python
+class MyNoisyGradientDescent(Interface_optimizer):
+    def __init__(self,learning_rate,noise_variance):
+        Interface_optimizer.__init__(self)
+
+    def run_one_step(self,x,function_to_min):
+        dfx=function_to_min.df(x) # 
+        noise=np.random.normal(np.zeros(x.shape),noise_variance)
+        return x-learning_rate*dfx*noise
+ ```
 
 <h2>Use case</h2>
 
