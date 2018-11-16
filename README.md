@@ -1,6 +1,6 @@
 <h1>PyToolOptimizer</h1>
 
-This project is a tool to help searchers in Optimization to code exciting new optimizer ! 
+This project is a tool to help searchers in Optimization to code quickly exciting new optimizer ! 
 
 You can use any part or all this project to help you to implement new optimizer or new function to minimize. It's especially handsome in Deep Learning field because our tool abstracts complexity of the Deep Learning framework Tensorflow.
 
