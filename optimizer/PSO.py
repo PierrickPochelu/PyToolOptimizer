@@ -59,7 +59,7 @@ class Particle:
 
 
 
-class Swarm(optimizer_interface):
+class PSO(optimizer_interface):
     def __init__(self,num_particles,init_x_swarm, scale_init_vel,apriori_nn,momentum=0.5,my_vel_contrib=1.,social_vel_contrib=2.):
         optimizer_interface.__init__(self)
         self.num_particles=num_particles
@@ -68,12 +68,9 @@ class Swarm(optimizer_interface):
         w0=np.zeros(init_x_swarm.shape)
         def PI_my_vel():
             return np.random.uniform(size=w0.shape)
-            #return np.abs(apriori_nn(w0))/2.
-            #return np.abs(np.random.normal(size=w0.shape))/2.
+
         def PI_social_vel():
             return np.random.uniform(size=w0.shape)
-            #return np.abs(apriori_nn(w0)) / 2.
-            #return np.abs(np.random.normal(size=w0.shape))/2.
 
         for i in range(self.num_particles):
             p=Particle(vec_init_pos=init_x_swarm,
