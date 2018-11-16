@@ -31,6 +31,10 @@ More examples here :
 </ul>
 </p>
 
+<h3> How implement new function ? </h3>
+
+<h3> How implement new optimizer ? </h3>
+
 <h2>Use case</h2>
 
 <h3> Use case 1 : compare different Deep Learning optimizer </h3>
