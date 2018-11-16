@@ -10,10 +10,10 @@ The use of this framework is particularly recommended in the field of Deep Learn
 <h2>How to use it ?</h2>
 The usage is very simple :
 <code>
-function_to_min = Rosenbrock() <br/>
-optimizer = MCMC() <br/>
-x=np.random.uniform(-1,+1,(2,)) <br/>
-x_n=optimizer.run_on_step(x,function_to_min) </br>
+function_to_min = Rosenbrock() &nbsp;
+optimizer = MCMC() &nbsp;
+x=np.random.uniform(-1,+1,(2,)) &nbsp;
+x_n=optimizer.run_on_step(x,function_to_min) &nbsp;
 </code>
 x_n contains the new position. <br/>
 
