@@ -64,4 +64,5 @@ class MyNoisyGradientDescent(Interface_optimizer):
 <img src="img2.png"/>
 
 <h3> Use case 3 : compare MCMC and SGD on cosinusoidal 1D function </h3>
-<img src="img3.png"/>
+<img src="img3_mcmc.png"/>
+<img src="img3_sgd.png"/>
