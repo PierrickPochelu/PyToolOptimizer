@@ -1,10 +1,13 @@
 import numpy as np
-from function_to_min.Abstract_function_to_min import function_to_min
-class absolute(function_to_min):
-    def __init__(self):
-        function_to_min.__init__(self)
 
-    def f(self,x):
+from function_to_min import InterfaceFunctionToMin
+
+
+class absolute(InterfaceFunctionToMin):
+    def __init__(self):
+        InterfaceFunctionToMin.__init__(self)
+
+    def f(self, x):
         return np.abs(x)
 
     def df(self, x):

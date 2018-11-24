@@ -1,4 +1,4 @@
-class function_to_min():
+class InterfaceFunctionToMin:
     def __init__(self):
         pass
 
@@ -10,3 +10,6 @@ class function_to_min():
 
     def ddf(self, x):
         pass
+
+    def get_name(self):
+        return self.__class__.__name__

@@ -1,11 +1,11 @@
 import numpy as np
 from numpy.linalg import inv
-from function_to_min.Abstract_function_to_min import function_to_min
+from function_to_min import InterfaceFunctionToMin
 from util import util
 
-class Rosenbrock(function_to_min):
+class Rosenbrock(InterfaceFunctionToMin):
     def __init__(self):
-        function_to_min.__init__(self)
+        InterfaceFunctionToMin.__init__(self)
 
     def rosen_hess(self,x):
         x = np.asarray(x)

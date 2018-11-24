@@ -69,7 +69,6 @@ class CNN_3conv(CNN):
         x = tf.layers.max_pooling2d(x, 3, 2)
         x = tf.layers.conv2d(x, 64, 3, activation=tf.nn.relu, strides=1, use_bias=use_bias, padding='same')
         x = tf.layers.max_pooling2d(x, 3, 2)
-
         flat = tf.layers.flatten(x)
         fc1 = tf.layers.dense(flat, 64, activation=tf.nn.relu, use_bias=use_bias)
         out = tf.layers.dense(fc1, output_shape[0], activation=tf.nn.softmax, use_bias=use_bias)

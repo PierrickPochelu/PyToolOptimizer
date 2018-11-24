@@ -1,8 +1,8 @@
 import numpy as np
-from function_to_min.Abstract_function_to_min import function_to_min
-class square(function_to_min):
+from function_to_min import InterfaceFunctionToMin
+class square(InterfaceFunctionToMin):
     def __init__(self):
-        function_to_min.__init__(self)
+        InterfaceFunctionToMin.__init__(self)
 
     def f(self,x):
         return (x)**2

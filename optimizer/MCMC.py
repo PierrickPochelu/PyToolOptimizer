@@ -1,23 +1,30 @@
-from optimizer.optimizer_interface import optimizer_interface
+from optimizer import Interface_optimizer
 import numpy as np
+from functools import partial
 
-class MCMC(optimizer_interface):
-    def __init__(self, PI=None, lambd=1e-3, iter_mcmc=1):
-        optimizer_interface.__init__(self)
+class MCMC(Interface_optimizer):
+    def __init__(self, sigma, PI=None, lambd=1e-3, iter_mcmc=1):
+        Interface_optimizer.__init__(self)
         self.lambd=lambd
         self.fx=None
-        self.PI=PI
-        self.last_it_accept=None
+
+        if PI is None:
+            def PI(x,sigma):
+                return np.random.normal(x,sigma)
+        self.init_sigma=sigma
+        self.sigma=sigma
+        self.PI=partial(PI,sigma=self.sigma)
+
+        self.last_it_accept=0
         self.iterMCMC=iter_mcmc
+
 
     def run_one_step(self,x,function_to_min):
         #if self.fx is None: # first time
         self.fx=function_to_min.f(x)
 
-        # compute proposal
-        #if self.PI is None:
-        #    xp = np.random.standard_t(self.dof, x.shape) * self.sigma + x
-        #else:
+
+        self.last_it_accept=0
 
         for i in range(self.iterMCMC):
             xp = self.PI(x)
@@ -31,6 +38,13 @@ class MCMC(optimizer_interface):
             if accept:
                 x = xp
                 self.fx=fx_prop
+                self.last_it_accept+=1
+
+        if self.last_it_accept==0 and self.iterMCMC>1:
+            self.sigma*=0.1
+            self.PI=partial(function_to_min.apriori_nn,sigma=self.sigma)
+            print("sigma=" + str(self.sigma))
+
 
 
         return x
@@ -41,3 +55,5 @@ class MCMC(optimizer_interface):
         :return:
         """
         self.fx=None
+    def reset_sigma(self):
+        self.sigma=self.init_sigma

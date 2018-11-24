@@ -1,4 +1,4 @@
-class optimizer_interface():
+class Interface_optimizer():
     def __init__(self):
         pass
     def run_one_step(self,x,function_to_min):

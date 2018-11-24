@@ -3,13 +3,13 @@ from numpy.linalg import inv
 from function_to_min.tensorflow_util.TensorflowObject import TensorflowObject
 from function_to_min.tensorflow_util.CNN_defaultCNNs import CNN_2conv
 
-from function_to_min.Abstract_function_to_min import function_to_min
+from function_to_min import InterfaceFunctionToMin
 #from util import util
 import tensorflow as tf
 
-class Deeplearning(function_to_min):
-    def __init__(self, simpleCNN, batch_size_memory, batch_size_algo, np_dataset, mini_batch_mode=False, callback_after_batch=None):
-        function_to_min.__init__(self)
+class Deeplearning(InterfaceFunctionToMin):
+    def __init__(self, simpleCNN, batch_size_memory, batch_size_algo, np_dataset, mini_batch_mode=False):
+        InterfaceFunctionToMin.__init__(self)
 
         # LOAD DATA
         self.X_train, self.Y_train, self.X_test, self.Y_test = np_dataset
@@ -30,12 +30,6 @@ class Deeplearning(function_to_min):
         self.cur_batch_end_id=0
         self.next_batch_sometime_shuffle()
 
-        # something special to do after each batch ?
-        if callback_after_batch is None:
-            def nothing():
-                pass
-            self.callback_after_batch=nothing
-
 
     def f(self, w):
         """
@@ -49,7 +43,6 @@ class Deeplearning(function_to_min):
         # change batch for next time ?
         if self.mini_batch_mode:
             self.next_batch_sometime_shuffle()
-        self.callback_after_batch()
         return loss
 
     def df(self,w):
@@ -62,7 +55,6 @@ class Deeplearning(function_to_min):
         # change batch for next time ?
         if self.mini_batch_mode:
             self.next_batch_sometime_shuffle()
-        self.callback_after_batch()
 
         return np_gradients
 
@@ -107,6 +99,8 @@ class Deeplearning(function_to_min):
                 else:
                     # other layer are disabled
                     self.list_activation_layer[i]=np.zeros(self.list_activation_layer[i].shape)
+        # effort
+        return int(np.sum([np.sum(l) for l in self.list_activation_layer]))
 
     def get_effort_training(self):
         """
@@ -164,8 +158,11 @@ class Deeplearning(function_to_min):
     def glorout_init_and_get_weights(self):
         return self.tensorflowObject.glorout_init_and_get_weights()
 
+    def forward_init_and_get_weights(self):
+        w0=np.zeros(self.get_nb_variables())
+        return self.apriori_nn(w0,1.)
 
-    def apriori_nn(self,w,dof,sigma):
+    def apriori_nn(self,w,sigma):
         start_i=0
         end_i = 0
         list_variance_layers=self.tensorflowObject.layer_std
@@ -184,7 +181,10 @@ class Deeplearning(function_to_min):
             else: # forward
                 apriori_layer=w[start_i:end_i]
             """
-            apriori_layer = (np.random.standard_t(dof, (nb_values,)) * A) * std_layer * sigma + w[start_i:end_i]
+            #apriori_layer = (np.random.standard_t(dof, (nb_values,)) * A) * std_layer * sigma + w[start_i:end_i]
+            delta=(np.random.normal(0,scale=std_layer*sigma , size=(nb_values,)) * A)
+            #delta=np.random.normal(0,scale=1.,size=(1,))*delta
+            apriori_layer = delta + w[start_i:end_i]
 
             w2[start_i:end_i]=apriori_layer
 

@@ -1,7 +1,7 @@
 from __future__ import division
 import random
 import math
-from optimizer.optimizer_interface import optimizer_interface
+from optimizer import Interface_optimizer
 import numpy as np
 
 
@@ -59,9 +59,9 @@ class Particle:
 
 
 
-class PSO(optimizer_interface):
+class PSO(Interface_optimizer):
     def __init__(self,num_particles,init_x_swarm, scale_init_vel,apriori_nn,momentum=0.5,my_vel_contrib=1.,social_vel_contrib=2.):
-        optimizer_interface.__init__(self)
+        Interface_optimizer.__init__(self)
         self.num_particles=num_particles
         self.swarm=[]
 

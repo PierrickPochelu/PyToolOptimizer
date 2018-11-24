@@ -1,47 +1,48 @@
-from optimizer.optimizer_interface import optimizer_interface
 import numpy as np
 
-class SPSA(optimizer_interface):
-    def __init__(self,lr,epsilon_length,PI):
-        optimizer_interface.__init__(self)
-        self.lr=lr
-        self.epsilon_length=epsilon_length
-        self.PI=PI
+from optimizer import Interface_optimizer
 
-    def run_one_step0(self,x,function_to_min):
-        fx=function_to_min.f(x)
-        xa_epsilon = np.abs(self.PI(np.zeros(x.shape), sigma=self.epsilon_length, dof=30))
-        xa_epsilon=(xa_epsilon/np.linalg.norm(xa_epsilon))
-        xa_epsilon=self.epsilon_length*xa_epsilon
+nb = 100
+class SPSA(Interface_optimizer):
+    def __init__(self, lr, epsilon_length, PI=None):
+        Interface_optimizer.__init__(self)
+        self.lr = lr
+        self.epsilon_length = epsilon_length
 
-        #xb_epsilon = np.abs(self.PI(x, sigma=self.epsilon_length, dof=30))
-        #xb_epsilon=(xb_epsilon/np.linalg.norm(xb_epsilon))
-        xb_epsilon=-1*xa_epsilon
+        if PI is None:
+            def PI(x):
+                return np.random.normal(x, .1)
+        self.PI = PI
 
-        x_proposed=x+xa_epsilon
 
-        fx_proposed=function_to_min.f(x_proposed)
-        coef_direction=(fx_proposed-fx)/(self.epsilon_length)# 0> if it's better
+    def run_one_step(self, x, function_to_min):
+        fx = function_to_min.f(x)
+        random_positive_vector_norm = np.abs(self.PI(np.zeros(x.shape))) / 2.
+        random_positive_vector_norm = (random_positive_vector_norm / np.linalg.norm(random_positive_vector_norm))
+        random_positive_vector_norm = self.epsilon_length * random_positive_vector_norm
 
-        new_x = x - self.lr * coef_direction
+        fx_proposed = function_to_min.f(x + random_positive_vector_norm)
+        coef_direction = (fx_proposed - fx) / (self.epsilon_length)  # 0> if it's better
+
+        grad = self.lr * coef_direction * random_positive_vector_norm
+
+        new_x = x - grad
 
         return new_x
 
-    def run_one_step(self,x,function_to_min):
-        #fx=function_to_min.f(x)
+    def run_one_step0(self, x, function_to_min):
+        # fx=function_to_min.f(x)
 
         # compute delta value
-        x_epsilon = np.abs(self.PI(np.zeros(x.shape)))/2.
-        x_epsilon=(x_epsilon/np.linalg.norm(x_epsilon))
-        x_epsilon=self.epsilon_length*x_epsilon
+        x_epsilon = np.abs(self.PI(np.zeros(x.shape))) / 2.
+        x_epsilon = (x_epsilon / np.linalg.norm(x_epsilon))
+        x_epsilon = self.epsilon_length * x_epsilon
 
+        fxa_proposed = function_to_min.f(x + x_epsilon)
+        fxb_proposed = function_to_min.f(x - x_epsilon)
 
+        coef_direction = (fxa_proposed - fxb_proposed) / (2 * self.epsilon_length)
 
-        fxa_proposed=function_to_min.f(x+x_epsilon)
-        fxb_proposed=function_to_min.f(x-x_epsilon)
-
-        coef_direction=(fxa_proposed-fxb_proposed)/(2*self.epsilon_length)
-
-        new_x = x - self.lr * coef_direction
+        new_x = x - (self.lr * coef_direction * x_epsilon)
 
         return new_x
