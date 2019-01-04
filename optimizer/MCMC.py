@@ -13,10 +13,10 @@ class MCMC(Interface_optimizer):
                 return np.random.normal(x,sigma)
         self.init_sigma=sigma
         self.sigma=sigma
-        self.PI=partial(PI,sigma=self.sigma)
+        self.PI=PI
 
         self.last_it_accept=0
-        self.iterMCMC=iter_mcmc
+        self.iter_mcmc=iter_mcmc
 
 
     def run_one_step(self,x,function_to_min):
@@ -26,13 +26,14 @@ class MCMC(Interface_optimizer):
 
         self.last_it_accept=0
 
-        for i in range(self.iterMCMC):
-            xp = self.PI(x)
+        for i in range(self.iter_mcmc):
+            xp = self.PI(x,sigma=self.sigma)
             fx_prop = function_to_min.f(xp)
 
             # accept or reject ?
-            accept_rate = -self.lambd * (fx_prop - self.fx)
-            accept = np.log(np.random.uniform(0., 1.)) < accept_rate
+            #accept_rate = -self.lambd * (fx_prop - self.fx)
+            #accept = np.log(np.random.uniform(0., 1.)) < accept_rate
+            accept = fx_prop < self.fx
 
             # update x
             if accept:
@@ -40,12 +41,10 @@ class MCMC(Interface_optimizer):
                 self.fx=fx_prop
                 self.last_it_accept+=1
 
-        if self.last_it_accept==0 and self.iterMCMC>1:
+        accept_rate=self.last_it_accept / self.iter_mcmc
+        if accept_rate <= 0.001:
             self.sigma*=0.1
-            self.PI=partial(function_to_min.apriori_nn,sigma=self.sigma)
             print("sigma=" + str(self.sigma))
-
-
 
         return x
 
@@ -57,3 +56,4 @@ class MCMC(Interface_optimizer):
         self.fx=None
     def reset_sigma(self):
         self.sigma=self.init_sigma
+        print("sigma=" + str(self.sigma))

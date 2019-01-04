@@ -38,6 +38,10 @@ class MNIST(Abstract_DB):
         X_test=test_set[0]
         Y_test=self.onehot(test_set[1])
 
+        # process
+        X_train=X_train*2.-1.
+        X_test=X_test*2.-1.
+
         return X_train, Y_train,X_test,Y_test
 
 

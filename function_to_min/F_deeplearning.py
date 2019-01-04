@@ -8,7 +8,7 @@ from function_to_min import InterfaceFunctionToMin
 import tensorflow as tf
 
 class Deeplearning(InterfaceFunctionToMin):
-    def __init__(self, simpleCNN, batch_size_memory, batch_size_algo, np_dataset, mini_batch_mode=False):
+    def __init__(self, simpleCNN, batch_size_accumulation, batch_size_algo, np_dataset, mini_batch_mode=False):
         InterfaceFunctionToMin.__init__(self)
 
         # LOAD DATA
@@ -22,7 +22,7 @@ class Deeplearning(InterfaceFunctionToMin):
 
         # batch management
         self.mini_batch_mode=mini_batch_mode
-        self.batch_size_memory = batch_size_memory
+        self.batch_size_memory = batch_size_accumulation
         self.batch_size_algo = batch_size_algo
         self.i=0
         self.__next_batch_id=0
@@ -153,6 +153,14 @@ class Deeplearning(InterfaceFunctionToMin):
 
     def loss_trainDataset(self,w):
         output=self.tensorflowObject.loss(w, self.X_train,self.Y_train, batch_size_memory=self.batch_size_memory)
+        return output
+
+    def loss_trainDataset_alone(self,w):
+        output=self.tensorflowObject.loss_alone(w, self.X_train,self.Y_train, batch_size_memory=self.batch_size_memory)
+        return output
+
+    def forward_trainDataset_debug(self,w):
+        output=self.tensorflowObject.forward_debug(w, self.X_train, batch_size_memory=self.batch_size_memory)
         return output
 
     def glorout_init_and_get_weights(self):

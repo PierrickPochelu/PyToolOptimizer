@@ -1,6 +1,5 @@
 import numpy as np
 import numdifftools as nd
-from scipy.misc import derivative
 
 def partial_function(f___,input,pos,value):
     tmp  = input[pos]

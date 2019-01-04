@@ -85,3 +85,41 @@ class CNN_3conv(CNN):
         loss = tf.reduce_mean(f_with_cross_entropy, keep_dims=True)[0]
 
         self.loss_model = loss
+
+class CNN_Lenet5(CNN):
+    def __init__(self,input_shape,output_shape):
+        """
+
+        :param input_shape: tuple ex : (32,32,3) for cifar10
+        :param output_shape: tuple ex : (10,) for cifar10
+        """
+        CNN.__init__(self)
+        use_bias=False
+
+        # construct model
+        num_output=10
+        self.placeholder_x = tf.placeholder(dtype=tf.float32, shape=(None,  np.prod(input_shape)), name="x")
+
+        x = tf.reshape(self.placeholder_x, shape=[-1, input_shape[0], input_shape[1], input_shape[2]])
+
+        x = tf.layers.conv2d(x, 6, 5, activation=tf.nn.tanh, strides=1, use_bias=use_bias, padding='same')
+        x = tf.layers.average_pooling2d(x, 2, 2)
+        x = tf.layers.conv2d(x, 16, 3, activation=tf.nn.tanh, strides=1, use_bias=use_bias, padding='same')
+        x = tf.layers.average_pooling2d(x, 2, 2)
+        flat = tf.layers.flatten(x)
+        x = tf.layers.dense(flat, 120, activation=tf.nn.tanh, use_bias=use_bias)
+        x = tf.layers.dense(x, 84, activation=tf.nn.tanh, use_bias=use_bias)
+        out = tf.layers.dense(x, output_shape[0], activation=tf.nn.softmax, use_bias=use_bias)
+        self.forward_model = out
+
+        # add loss layers
+        self.placeholder_y= tf.placeholder(dtype=tf.float32, shape=(None, 10), name="y")
+
+
+
+        epsilon = tf.constant(value=1e-15, shape=output_shape)
+        f_with_cross_entropy = -tf.reduce_mean(self.placeholder_y * tf.log(out + epsilon) +
+                                               (1. - self.placeholder_y) * tf.log(1. - out + epsilon), axis=1)
+        loss = tf.reduce_mean(f_with_cross_entropy, keep_dims=True)[0]
+
+        self.loss_model = loss

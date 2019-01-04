@@ -11,6 +11,7 @@ class TensorflowObject():
             )
         else:
             config = tf.ConfigProto()
+        config.gpu_options.allow_growth = True
         self.tf_sess=tf.Session(config=config)
 
         # build model
@@ -29,7 +30,7 @@ class TensorflowObject():
 
         # compute gradients
         opt = tf.train.GradientDescentOptimizer(learning_rate=1.)
-        self.tf_gradients = opt.compute_gradients(self.cnn.loss_model)
+        self.tf_gradients = opt.compute_gradients(self.cnn.get_loss_model())
 
     def get_tensor(self, c):
         return tf.get_default_graph().get_tensor_by_name(c + ':0')
@@ -82,8 +83,8 @@ class TensorflowObject():
                 other_dim=list_var_shape[0]
                 n_input*=other_dim
                 n_output*=other_dim
-            #array_std_layer[i]= np.sqrt( 1./(0.5*(n_output+n_input)) )
-            array_std_layer[i] = np.sqrt(1. / n_input)
+            #array_std_layer[i]= np.sqrt( 1./(0.5*(n_output+n_input)) ) # glorout init
+            array_std_layer[i] = np.sqrt(1. / n_input) # forward init
 
             # for debug purpose
             # print(str(array_variables_variances[i]) +"  "+  str(np.var(self.tf_sess.run(var)))  )
@@ -176,14 +177,52 @@ class TensorflowObject():
 
         return Y_
 
+    def basic_loss_alone(self, w, x,truey):
+
+        # assign weights
+        self.__set_weights_to_model(w)
+
+        # forward
+        Y_ = self.tf_sess.run(self.cnn.get_loss_alone_model(), feed_dict={self.cnn.get_placeholder_x(): x,
+                                                                    self.cnn.get_placeholder_y(): truey})
+
+        return Y_
+
+    def basic_forward_debug(self, w, x):
+        # assign weights
+        self.__set_weights_to_model(w)
+
+        # forward
+        Y_ = self.tf_sess.run(self.cnn.get_forward_model_debug(), feed_dict={self.cnn.get_placeholder_x(): x})
+        return Y_
+
     def loss(self, w, x_test, y_test, batch_size_memory=100):
         loss_cumul=0.
         for i in range(0, x_test.shape[0], batch_size_memory):
             x_batch= x_test[i:i + batch_size_memory]
             truey_batch= y_test[i:i + batch_size_memory]
             loss_cumul+= ( self.basic_loss(w,x_batch,truey_batch) * x_batch.shape[0])
+        nb_data=x_test.shape[0]
+        if nb_data>0:
+            loss_averaged_sample= loss_cumul / nb_data
+        else:
+            loss_averaged_sample=0
+        return loss_averaged_sample
+
+    def loss_alone(self, w, x_test, y_test, batch_size_memory=100):
+        loss_cumul=0.
+        for i in range(0, x_test.shape[0], batch_size_memory):
+            x_batch= x_test[i:i + batch_size_memory]
+            truey_batch= y_test[i:i + batch_size_memory]
+            loss_cumul+= ( self.basic_loss_alone(w,x_batch,truey_batch) * x_batch.shape[0])
         loss_averaged_sample= loss_cumul / x_test.shape[0]
         return loss_averaged_sample
+
+    def forward_debug(self, w, x_test,  batch_size_memory=100):
+        i=0
+        x_batch= x_test[i:i + batch_size_memory]
+        return self.basic_forward_debug(w,x_batch)
+
 
     def basic_gradients(self, w, x,truey):
         # Computing the gradient of cost with respect to W and b

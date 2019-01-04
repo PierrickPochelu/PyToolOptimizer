@@ -54,7 +54,7 @@ np_dataset=db.get_np_dataset()
 cnn=CNN_3conv(db.get_input_shape(), db.get_output_shape())
 function_to_min=Deeplearning(np_dataset=np_dataset,
                              simpleCNN=cnn,
-                             batch_size_memory=2500,
+                             batch_size_accumulation=2500,
                              batch_size_algo=batch_size_algo,
                              mini_batch_mode=False)
 nbDim=function_to_min.tensorflowObject.count_trainable_variables()
