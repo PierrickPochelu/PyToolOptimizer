@@ -101,6 +101,10 @@ class CIFAR10(Abstract_DB):
     def get_np_dataset(self):
         X_train, Y_train = self.__get_cifar10_toronto_x_and_y(name="train", path=self.path)
         X_test, Y_test = self.__get_cifar10_toronto_x_and_y(name="test", path=self.path)
+
+        X_train=X_train.reshape((len(X_train),32,32,3)).astype(np.float32)
+        X_test=X_test.reshape((len(X_test),32,32,3)).astype(np.float32)
+
         return (X_train,Y_train,X_test,Y_test)
 
     def get_input_shape(self):
